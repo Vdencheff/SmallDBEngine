@@ -105,13 +105,13 @@ QBTable QBDBManager::QBFindMatchingRecords(std::string searchColumn, std::string
 
 std::vector<int> QBDBManager::PerformStrSearch(std::string searchColumn, std::string& searchString)
 {
-    std::map<std::string, int> strColToInt{{"column0",1}, {"column1",2}, {"column2",3}, {"column3",4}};
-    int col = strColToInt[searchColumn]; // if column name does not exist in the map, the return value is 0, that is why the columns and return int are offset
-    if (col != 0)
+    std::map<std::string, int> strColToInt{{"column0",0}, {"column1",1}, {"column2",2}, {"column3",3}};
+    std::map<std::string, int>::iterator col = strColToInt.find(searchColumn);
+    if (col != strColToInt.end())
     {
         // find the searched string in the corresponding look up table
-        LookUpTable::iterator it = mLUT[col-1].find(searchString);
-        if (it != mLUT[col-1].end())
+        LookUpTable::iterator it = mLUT[col->second].find(searchString);
+        if (it != mLUT[col->second].end())
         {
             return it->second; // return all the position the search item resides in the database
         }
@@ -120,6 +120,7 @@ std::vector<int> QBDBManager::PerformStrSearch(std::string searchColumn, std::st
     {
         std::cout << "Wrong column name supplied!" << std::endl;
     }
+
     std::vector<int> retRes{}; // return empty vector if search does not succeed
     return retRes;
 }
